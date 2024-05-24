@@ -79,18 +79,18 @@ plt.bar(count_sex.index, count_sex.values)
 plt.show()
 
 # pandasでもグラフを描いてみる
-count_sex.plot(kind="bar",figsize=(6,4))
+count_sex.plot(kind="bar", figsize=(6, 4))
 
 # %%
 # seabornでグラフを書いてみる
 # seabornで作成すると、集計が不要でグラフ化できる
 # --------------------------------
-plt.figure(figsize=(6,4))
-sns.countplot(data=df,x="Sex")
+plt.figure(figsize=(6, 4))
+sns.countplot(data=df, x="Sex")
 plt.show()
 
-plt.figure(figsize=(6,4))
-sns.countplot(data=df,x="Pclass")
+plt.figure(figsize=(6, 4))
+sns.countplot(data=df, x="Pclass")
 plt.show()
 
 # %%
@@ -102,41 +102,41 @@ plt.show()
 ・新しいカラムを作成（特徴量エンジニアリングという）
 """
 # 特徴量として使うデータ以外をdropしてdfを作成する
-df2 = df.drop(columns=["Cabin","Fare","Ticket","SibSp","Parch","Name",])
+df2 = df.drop(columns=["Cabin", "Fare", "Ticket", "SibSp", "Parch", "Name"])
 df2.head()
 df2.isnull().sum()
 
-print("Embarkedの欠損値: " ,df2["Embarked"].isnull().sum())
-plt.figure(figsize=(6,4))
-sns.countplot(data=df,x="Embarked")
+print("Embarkedの欠損値: ", df2["Embarked"].isnull().sum())
+plt.figure(figsize=(6, 4))
+sns.countplot(data=df, x="Embarked")
 plt.show()
 
 # %%
 # df2のコピーを取ってから欠損値の補完をする
 # --------------------------------
 df3 = df2.copy()
-df3["Embarked"]=df3["Embarked"].fillna("S")
-print("Embarkedの欠損値: " ,df3["Embarked"].isnull().sum())
+df3["Embarked"] = df3["Embarked"].fillna("S")
+print("Embarkedの欠損値: ", df3["Embarked"].isnull().sum())
 
 # %%
 # Age欠損値の補完をする
 # --------------------------------
-print("Ageの欠損値: " ,df3["Age"].isnull().sum())
-print("Ageの最小: " ,df3["Age"].min())
-print("Ageの最大: " ,df3["Age"].max())
+print("Ageの欠損値: ", df3["Age"].isnull().sum())
+print("Ageの最小: ", df3["Age"].min())
+print("Ageの最大: ", df3["Age"].max())
 
-plt.figure(figsize=(6,4))
-sns.histplot(df3["Age"],kde=False,bins=8)
+plt.figure(figsize=(6, 4))
+sns.histplot(df3["Age"], kde=False, bins=8)
 plt.show()
 # %%
-print("Ageの平均値: " ,df3["Age"].mean())
-print("Ageの中央値: " ,df3["Age"].median())
+print("Ageの平均値: ", df3["Age"].mean())
+print("Ageの中央値: ", df3["Age"].median())
 
 # %%
 # 中央値で補完する
 age_median = df3["Age"].median()
-df3["Age"]=df3["Age"].fillna(age_median)
-print("Ageの欠損値: " ,df3["Age"].isnull().sum())
+df3["Age"] = df3["Age"].fillna(age_median)
+print("Ageの欠損値: ", df3["Age"].isnull().sum())
 
 # %%
 # 再度データ確認
@@ -145,12 +145,52 @@ df3.isnull().sum()
 # %%
 # カテゴリ変数の数値変換
 # ワンホットエンコーディング
-ohe_embarked = pd.get_dummies(df3["Embarked"],prefix="Embarked")
+ohe_embarked = pd.get_dummies(df3["Embarked"], prefix="Embarked")
 ohe_embarked.head()
 
-df4 = pd.concat([df3,ohe_embarked],axis=1)
+df4 = pd.concat([df3, ohe_embarked], axis=1)
 
 # %%
 # 不要になったEmbarkedを削除しておく
 df5 = df4.drop(columns=["Embarked"])
 df5.head()
+
+# %%
+# 性別カラムはラベルエンコーディングする
+# M=1　F＝0
+df5["Sex"] = pd.get_dummies(df5["Sex"], drop_first=True)
+df5.head()
+
+df5.info()
+
+# %%
+# データ分割
+train = df5[~df5["Survived"].isnull()]
+test = df5[df5["Survived"].isnull()]
+print(train.head())
+print(test.head())
+# %%
+test = test.drop(columns=["Survived"])
+test.head()
+
+# %%
+# 目的変数と説明変数を設定する
+y_train = train["Survived"]
+x_train = train.drop(columns=["Survived","PassengerId"])
+
+print("説明変数",x_train.shape)
+print("目的変数",y_train.shape)
+# %%
+x_train.head()
+# %%
+y_train.head()
+
+# %%
+# モデル作成　決定木でする
+from sklearn.tree import DecisionTreeClassifier
+
+model = DecisionTreeClassifier(random_state=42)
+model.fit(x_train,y_train)
+
+# %%
+# モデルの評価
