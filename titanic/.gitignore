@@ -1,0 +1,16 @@
+# 個人メモ
+memo.md
+memo.pdf
+
+# Kaggleデータ
+data/
+
+# 学習結果
+output/
+
+# python
+__pycache__/
+*.pyc
+
+# notebook checkpoint
+.ipynb_checkpoints/
