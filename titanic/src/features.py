@@ -47,11 +47,11 @@ conn.close()
 #     full_data = conn.query(f"""
 #             WITH full_data AS (
 #             SELECT
-#                 PassengerId,Survived,Pclass,Name,Sex,Age,SibSp,Parch,Ticket,Fare,Cabin,Embarked
+#                 PassengerId,Survived,Pclass,Name,Sex,Age,SibSp,Parch,Ticket,ROUND(Fare, 1),Cabin,Embarked
 #             FROM train
 #             UNION ALL
 #             SELECT
-#                 PassengerId,NULL as Survived,Pclass,Name,Sex,Age,SibSp,Parch,Ticket,Fare,Cabin,Embarked
+#                 PassengerId,NULL as Survived,Pclass,Name,Sex,Age,SibSp,Parch,Ticket,ROUND(Fare, 1),Cabin,Embarked
 #             FROM test
 #             )
 #             SELECT
