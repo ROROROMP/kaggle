@@ -1,22 +1,22 @@
 from pathlib import Path
 import os
 
+class Config:
+    # 環境判定
+    IS_KAGGLE = bool(os.getenv("KAGGLE_URL_BASE"))
 
-# Kaggle Notebook上かどうかを判定
-if os.getenv("KAGGLE_URL_BASE"):
-    # Kaggle Notebook用のパス
-    ROOT = Path("/kaggle/working")
-    DATA = Path("/kaggle/input/titanic")
-else:
-    # ローカル用のパス（VSCodeで実行する場合）
-    ROOT = Path(__file__).resolve().parents[1]
-    DATA = ROOT / "data/raw"
-    DB = ROOT / "data/db/titanic.duckdb"
+    # ルート
+    ROOT = Path("/kaggle/working") if IS_KAGGLE else Path.cwd()
 
-# 出力フォルダ
-OUTPUT = ROOT / "data/processed"
+    # データ
+    DATA = Path("/kaggle/input/titanic") if IS_KAGGLE else ROOT / "data/raw"
 
+    # 出力
+    OUTPUT = ROOT / "output"
+    OUTPUT.mkdir(exist_ok=True)
 
-# print(f"ルートフォルダ：{ROOT}")
-# print(f"データフォルダ：{DATA}")
-# print(f"出力フォルダ：{OUTPUT}")
+    # DB（必要なら）
+    # DB = ROOT / "data/db/titanic.duckdb"
+
+    # その他
+    # TARGET = "Survived"
