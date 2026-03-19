@@ -1,0 +1,14 @@
+# 個人メモ
+**/memo.md
+**/memo.pdf
+
+# VS Code 設定
+.vscode/
+
+# 各コンペフォルダ内の data と output をすべて除外
+**/data/
+**/output/
+
+# Python 関連の一時ファイル
+__pycache__/
+.ipynb_checkpoints/
